@@ -18,13 +18,13 @@ package com.examples.youtubeapidemo;
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
-import com.examples.youtubeapidemo.fragment.YouTubeFragment;
 import com.google.android.youtube.player.YouTubeApiServiceUtil;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer.OnFullscreenListener;
 import com.google.android.youtube.player.YouTubeThumbnailLoader;
 import com.google.android.youtube.player.YouTubeThumbnailLoader.ErrorReason;
 import com.google.android.youtube.player.YouTubeThumbnailView;
+import com.hisetu.youtubefragment.YouTubeFragment;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -90,13 +90,14 @@ public final class VideoListDemoActivity extends Activity implements OnFullscree
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        YouTubeFragment.developKey = DeveloperKey.DEVELOPER_KEY;
+        YouTubeFragment.initialize(DeveloperKey.DEVELOPER_KEY);
 
         setContentView(R.layout.video_list_demo);
 
         listFragment = (VideoListFragment) getFragmentManager().findFragmentById(R.id.list_fragment);
         youTubeFragment =
                 (YouTubeFragment) getFragmentManager().findFragmentById(R.id.video_fragment_container);
+        youTubeFragment.setControllerBackground(R.color.gray_tran);
 
         videoBox = findViewById(R.id.video_box);
         closeButton = findViewById(R.id.close_button);
