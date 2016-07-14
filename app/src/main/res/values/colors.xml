@@ -16,4 +16,5 @@
 -->
 <resources>
     <color name="gray">#ff888888</color>
+    <color name="gray_tran">#99384148</color>
 </resources>
