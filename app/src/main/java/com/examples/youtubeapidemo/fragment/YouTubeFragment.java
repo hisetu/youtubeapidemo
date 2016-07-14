@@ -16,23 +16,24 @@ import com.google.android.youtube.player.YouTubePlayerView;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 
-public final class VideoFragment extends YouTubePlayerFragment
+public final class YouTubeFragment extends YouTubePlayerFragment
         implements YouTubePlayer.OnInitializedListener {
 
     private YouTubePlayer player;
     private String videoId;
     private ViewGroup playerLayout;
     private OnClickListener clickListener;
+    public static String developKey;
 
-    public static VideoFragment newInstance() {
-        return new VideoFragment();
+    public static YouTubeFragment newInstance() {
+        return new YouTubeFragment();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        initialize(DeveloperKey.DEVELOPER_KEY, this);
+        initialize(developKey, this);
     }
 
     @Override
@@ -108,7 +109,6 @@ public final class VideoFragment extends YouTubePlayerFragment
         }
 
         player.setPlayerStyle(YouTubePlayer.PlayerStyle.CHROMELESS);
-
         player.setPlaybackEventListener(new YouTubePlayer.PlaybackEventListener() {
             @Override
             public void onPlaying() {

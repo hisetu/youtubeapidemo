@@ -18,7 +18,7 @@ package com.examples.youtubeapidemo;
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
-import com.examples.youtubeapidemo.fragment.VideoFragment;
+import com.examples.youtubeapidemo.fragment.YouTubeFragment;
 import com.google.android.youtube.player.YouTubeApiServiceUtil;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer.OnFullscreenListener;
@@ -79,7 +79,7 @@ public final class VideoListDemoActivity extends Activity implements OnFullscree
     private static final int RECOVERY_DIALOG_REQUEST = 1;
 
     private VideoListFragment listFragment;
-    private VideoFragment videoFragment;
+    private YouTubeFragment youTubeFragment;
 
     private View videoBox;
     private View closeButton;
@@ -90,11 +90,13 @@ public final class VideoListDemoActivity extends Activity implements OnFullscree
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        YouTubeFragment.developKey = DeveloperKey.DEVELOPER_KEY;
+
         setContentView(R.layout.video_list_demo);
 
         listFragment = (VideoListFragment) getFragmentManager().findFragmentById(R.id.list_fragment);
-        videoFragment =
-                (VideoFragment) getFragmentManager().findFragmentById(R.id.video_fragment_container);
+        youTubeFragment =
+                (YouTubeFragment) getFragmentManager().findFragmentById(R.id.video_fragment_container);
 
         videoBox = findViewById(R.id.video_box);
         closeButton = findViewById(R.id.close_button);
@@ -156,18 +158,18 @@ public final class VideoListDemoActivity extends Activity implements OnFullscree
 
         if (isFullscreen) {
             videoBox.setTranslationY(0); // Reset any translation that was applied in portrait.
-            setLayoutSize(videoFragment.getView(), MATCH_PARENT, MATCH_PARENT);
+            setLayoutSize(youTubeFragment.getView(), MATCH_PARENT, MATCH_PARENT);
             setLayoutSizeAndGravity(videoBox, MATCH_PARENT, MATCH_PARENT, Gravity.TOP | Gravity.LEFT);
         } else if (isPortrait) {
             setLayoutSize(listFragment.getView(), MATCH_PARENT, MATCH_PARENT);
-            setLayoutSize(videoFragment.getView(), MATCH_PARENT, WRAP_CONTENT);
+            setLayoutSize(youTubeFragment.getView(), MATCH_PARENT, WRAP_CONTENT);
             setLayoutSizeAndGravity(videoBox, MATCH_PARENT, WRAP_CONTENT, Gravity.BOTTOM);
         } else {
             videoBox.setTranslationY(0); // Reset any translation that was applied in portrait.
             int screenWidth = dpToPx(getResources().getConfiguration().screenWidthDp);
             setLayoutSize(listFragment.getView(), screenWidth / 4, MATCH_PARENT);
             int videoWidth = screenWidth - screenWidth / 4 - dpToPx(LANDSCAPE_VIDEO_PADDING_DP);
-            setLayoutSize(videoFragment.getView(), videoWidth, WRAP_CONTENT);
+            setLayoutSize(youTubeFragment.getView(), videoWidth, WRAP_CONTENT);
             setLayoutSizeAndGravity(videoBox, videoWidth, WRAP_CONTENT,
                     Gravity.RIGHT | Gravity.CENTER_VERTICAL);
         }
@@ -176,7 +178,7 @@ public final class VideoListDemoActivity extends Activity implements OnFullscree
     public void onClickClose(@SuppressWarnings("unused") View view) {
         listFragment.getListView().clearChoices();
         listFragment.getListView().requestLayout();
-        videoFragment.pause();
+        youTubeFragment.pause();
         ViewPropertyAnimator animator = videoBox.animate()
                 .translationYBy(videoBox.getHeight())
                 .setDuration(ANIMATION_DURATION_MILLIS);
@@ -243,10 +245,10 @@ public final class VideoListDemoActivity extends Activity implements OnFullscree
         public void onListItemClick(ListView l, View v, int position, long id) {
             String videoId = VIDEO_LIST.get(position).videoId;
 
-            VideoFragment videoFragment =
-                    (VideoFragment) getFragmentManager().findFragmentById(R.id.video_fragment_container);
-            videoFragment.setVideoId(videoId);
-            videoFragment.setOnClickListener(new VideoFragment.OnClickListener() {
+            YouTubeFragment youTubeFragment =
+                    (YouTubeFragment) getFragmentManager().findFragmentById(R.id.video_fragment_container);
+            youTubeFragment.setVideoId(videoId);
+            youTubeFragment.setOnClickListener(new YouTubeFragment.OnClickListener() {
                 @Override
                 public void onPlayClick() {
 
