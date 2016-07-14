@@ -1,14 +1,12 @@
-package com.examples.youtubeapidemo.fragment;
+package com.hisetu.youtubefragment;
 
 import android.os.Bundle;
+import android.support.annotation.DrawableRes;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import com.examples.youtubeapidemo.DeveloperKey;
-import com.examples.youtubeapidemo.R;
-import com.examples.youtubeapidemo.VideoListDemoActivity;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerFragment;
@@ -103,7 +101,7 @@ public final class YouTubeFragment extends YouTubePlayerFragment
     public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer player, boolean restored) {
         this.player = player;
         player.addFullscreenControlFlag(YouTubePlayer.FULLSCREEN_FLAG_CUSTOM_LAYOUT);
-        player.setOnFullscreenListener((VideoListDemoActivity) getActivity());
+        player.setOnFullscreenListener((YouTubePlayer.OnFullscreenListener) getActivity());
         if (!restored && videoId != null) {
             player.cueVideo(videoId);
         }
@@ -140,6 +138,10 @@ public final class YouTubeFragment extends YouTubePlayerFragment
     @Override
     public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult result) {
         this.player = null;
+    }
+
+    public void setControllerBackground(@DrawableRes int drawableRes) {
+        playerLayout.setBackgroundResource(drawableRes);
     }
 
     public void setOnClickListener(OnClickListener clickListener) {
