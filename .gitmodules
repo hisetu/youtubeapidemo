@@ -1,0 +1,3 @@
+[submodule "youtubefragment"]
+	path = youtubefragment
+	url = git@github.com:hisetu/youtube-overlay-fragment.git
