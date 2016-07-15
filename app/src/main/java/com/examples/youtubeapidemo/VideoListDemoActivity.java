@@ -20,6 +20,7 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
 import com.google.android.youtube.player.YouTubeApiServiceUtil;
 import com.google.android.youtube.player.YouTubeInitializationResult;
+import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayer.OnFullscreenListener;
 import com.google.android.youtube.player.YouTubeThumbnailLoader;
 import com.google.android.youtube.player.YouTubeThumbnailLoader.ErrorReason;
@@ -98,6 +99,27 @@ public final class VideoListDemoActivity extends Activity implements OnFullscree
         youTubeFragment =
                 (YouTubeFragment) getFragmentManager().findFragmentById(R.id.video_fragment_container);
         youTubeFragment.setControllerBackground(R.color.gray_tran);
+        TextView itemView = new TextView(this);
+        itemView.setText("new item 1");
+        TextView itemView2 = new TextView(this);
+        itemView2.setText("new item 2");
+        youTubeFragment.addItemView(itemView);
+        youTubeFragment.addItemView(itemView2);
+
+        youTubeFragment.addItem(android.R.drawable.ic_dialog_info, "delete",
+                new YouTubeFragment.OnItemClickListener() {
+                    @Override
+                    public void onClick(View view, YouTubePlayer player) {
+                        player.pause();
+                    }
+                });
+        youTubeFragment.addItem(android.R.drawable.ic_dialog_info, "新增",
+                new YouTubeFragment.OnItemClickListener() {
+                    @Override
+                    public void onClick(View view, YouTubePlayer player) {
+                        player.play();
+                    }
+                });
 
         videoBox = findViewById(R.id.video_box);
         closeButton = findViewById(R.id.close_button);
@@ -249,17 +271,6 @@ public final class VideoListDemoActivity extends Activity implements OnFullscree
             YouTubeFragment youTubeFragment =
                     (YouTubeFragment) getFragmentManager().findFragmentById(R.id.video_fragment_container);
             youTubeFragment.setVideoId(videoId);
-            youTubeFragment.setOnClickListener(new YouTubeFragment.OnClickListener() {
-                @Override
-                public void onPlayClick() {
-
-                }
-
-                @Override
-                public void onBuyNowClick() {
-
-                }
-            });
 
             // The videoBox is INVISIBLE if no video was previously selected, so we need to show it now.
             if (videoBox.getVisibility() != View.VISIBLE) {

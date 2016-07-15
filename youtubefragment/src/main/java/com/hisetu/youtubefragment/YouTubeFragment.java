@@ -1,11 +1,16 @@
 package com.hisetu.youtubefragment;
 
 import android.os.Bundle;
+import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.Nullable;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
@@ -13,14 +18,15 @@ import com.google.android.youtube.player.YouTubePlayerFragment;
 import com.google.android.youtube.player.YouTubePlayerView;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
 public final class YouTubeFragment extends YouTubePlayerFragment
         implements YouTubePlayer.OnInitializedListener {
 
     private YouTubePlayer player;
     private String videoId;
-    private View playerBackground;
-    private OnClickListener clickListener;
+    private View playerControllerBackground;
+    private ViewGroup playerControllerContainer;
 
     public static void initialize(String developKey) {
         YouTubeFragment.developKey = developKey;
@@ -52,26 +58,14 @@ public final class YouTubeFragment extends YouTubePlayerFragment
     }
 
     private void setUpPlayerView(View layout) {
-        playerBackground = layout.findViewById(R.id.player_background);
-        View playButton = layout.findViewById(R.id.play_button);
-        View buyNowButton = layout.findViewById(R.id.buy_now_button);
-
-        View.OnClickListener l = new View.OnClickListener() {
+        playerControllerBackground = layout.findViewById(R.id.player_controller_background);
+        playerControllerBackground.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (clickListener == null)
-                    return;
-
-                int id = view.getId();
-                if (id == R.id.play_button) {
-                    clickListener.onPlayClick();
-                } else if (id == R.id.buy_now_button) {
-                    clickListener.onBuyNowClick();
-                }
+                player.pause();
             }
-        };
-        playButton.setOnClickListener(l);
-        buyNowButton.setOnClickListener(l);
+        });
+        playerControllerContainer = (ViewGroup) layout.findViewById(R.id.player_controller_container);
     }
 
     @Override
@@ -106,21 +100,24 @@ public final class YouTubeFragment extends YouTubePlayerFragment
             player.cueVideo(videoId);
         }
 
-        player.setPlayerStyle(YouTubePlayer.PlayerStyle.CHROMELESS);
+        player.setPlayerStyle(YouTubePlayer.PlayerStyle.MINIMAL);
         player.setPlaybackEventListener(new YouTubePlayer.PlaybackEventListener() {
             @Override
             public void onPlaying() {
-                playerBackground.setVisibility(View.INVISIBLE);
+                playerControllerBackground.setVisibility(View.INVISIBLE);
+                playerControllerContainer.setVisibility(View.INVISIBLE);
             }
 
             @Override
             public void onPaused() {
-                playerBackground.setVisibility(View.VISIBLE);
+                playerControllerBackground.setVisibility(View.VISIBLE);
+                playerControllerContainer.setVisibility(View.VISIBLE);
             }
 
             @Override
             public void onStopped() {
-                playerBackground.setVisibility(View.VISIBLE);
+                playerControllerBackground.setVisibility(View.VISIBLE);
+                playerControllerContainer.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -140,17 +137,45 @@ public final class YouTubeFragment extends YouTubePlayerFragment
         this.player = null;
     }
 
-    public void setControllerBackground(@DrawableRes int drawableRes) {
-        playerBackground.setBackgroundResource(drawableRes);
+    public void setControllerBackground(@ColorRes int colorRes) {
+        playerControllerBackground.setBackgroundColor(getResources().getColor(colorRes));
     }
 
-    public void setOnClickListener(OnClickListener clickListener) {
-        this.clickListener = clickListener;
+    public void addItemView(TextView itemView) {
+        playerControllerContainer.addView(itemView);
     }
 
-    public interface OnClickListener {
-        void onPlayClick();
+    public void addItem(@DrawableRes int icon, String text, @Nullable final OnItemClickListener clickListener) {
+        TextView textView = new TextView(getActivity());
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (clickListener == null)
+                    return;
+                clickListener.onClick(view, player);
+            }
+        });
 
-        void onBuyNowClick();
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
+        params.topMargin = (int) getPxFromDp(10, displayMetrics);
+        textView.setLayoutParams(params);
+
+        textView.setCompoundDrawablesWithIntrinsicBounds(
+                getResources().getDrawable(icon), null, null, null);
+        textView.setCompoundDrawablePadding((int) getPxFromDp(5, displayMetrics));
+        textView.setText(text);
+        textView.setTextColor(getResources().getColor(android.R.color.white));
+        textView.setTextSize((int) getPxFromDp(9, displayMetrics));
+
+        playerControllerContainer.addView(textView);
+    }
+
+    private float getPxFromDp(int value, DisplayMetrics displayMetrics) {
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, value, displayMetrics);
+    }
+
+    public interface OnItemClickListener {
+        void onClick(View view, YouTubePlayer player);
     }
 }
