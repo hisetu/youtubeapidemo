@@ -19,7 +19,7 @@ public final class YouTubeFragment extends YouTubePlayerFragment
 
     private YouTubePlayer player;
     private String videoId;
-    private ViewGroup playerLayout;
+    private View playerBackground;
     private OnClickListener clickListener;
 
     public static void initialize(String developKey) {
@@ -46,20 +46,15 @@ public final class YouTubeFragment extends YouTubePlayerFragment
         ViewGroup layout = (ViewGroup) layoutInflater.inflate(R.layout.player_controller, viewGroup);
         layout.addView(youtubeView, 0, new FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT));
 
-        playerLayout = (ViewGroup) layout.findViewById(R.id.play_layout);
+        setUpPlayerView(layout);
 
         return layout;
     }
 
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        setUpPlayerView();
-    }
-
-    private void setUpPlayerView() {
-        View playButton = playerLayout.findViewById(R.id.play_button);
-        View buyNowButton = playerLayout.findViewById(R.id.buy_now_button);
+    private void setUpPlayerView(View layout) {
+        playerBackground = layout.findViewById(R.id.player_background);
+        View playButton = layout.findViewById(R.id.play_button);
+        View buyNowButton = layout.findViewById(R.id.buy_now_button);
 
         View.OnClickListener l = new View.OnClickListener() {
             @Override
@@ -115,17 +110,17 @@ public final class YouTubeFragment extends YouTubePlayerFragment
         player.setPlaybackEventListener(new YouTubePlayer.PlaybackEventListener() {
             @Override
             public void onPlaying() {
-                playerLayout.setVisibility(View.INVISIBLE);
+                playerBackground.setVisibility(View.INVISIBLE);
             }
 
             @Override
             public void onPaused() {
-                playerLayout.setVisibility(View.VISIBLE);
+                playerBackground.setVisibility(View.VISIBLE);
             }
 
             @Override
             public void onStopped() {
-                playerLayout.setVisibility(View.VISIBLE);
+                playerBackground.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -146,7 +141,7 @@ public final class YouTubeFragment extends YouTubePlayerFragment
     }
 
     public void setControllerBackground(@DrawableRes int drawableRes) {
-        playerLayout.setBackgroundResource(drawableRes);
+        playerBackground.setBackgroundResource(drawableRes);
     }
 
     public void setOnClickListener(OnClickListener clickListener) {
